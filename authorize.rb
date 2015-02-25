@@ -4,6 +4,7 @@ require 'net/http'
 require 'uri'
 require 'pry'
 require 'rest_client'
+require 'httparty'
 
 config_file '.credentials.yml'
 
@@ -17,74 +18,41 @@ get '/authorize' do
 
   # Generate deploy key
   ssh_path = File.expand_path("~/.ssh/#{project}")
-  # system("ssh-keygen -t rsa -N '' -f #{ssh_path}")
+  system("ssh-keygen -t rsa -N '' -f #{ssh_path}")
+
   # Added deploy key
-  # uri = URI.parse("#{settings.uri}/#{project}/keys?access_token=#{settings.access_token}")
-  # http = Net::HTTP.new(uri.host, uri.port)
-  # http.use_ssl = true
-  # request = Net::HTTP::Post.new(uri.request_uri)
+  body = "{
+    \"title\":\"Jenkins\",
+    \"key\": \"#{File.open("#{ssh_path}.pub").read.gsub("\n", '')}\"
+  }"
+  options = {
+    body: body,
+    headers: {'Content-Type' => 'application/json', 'User-Agent' => project}
+  }
+  response = HTTParty.post(
+    "#{settings.uri}/#{project}/keys?access_token=#{settings.access_token}",
+    options
+  )
+  return puts "Error generating deploy key #{response.body}" if response.code != 201
 
-  # request.set_form_data({
-  #   'title' => 'Wolox Jenkins',
-  #   'key' => File.open("#{ssh_path}.pub").read.gsub("\n", '')
-  # })
-  # request['Content-Type'] = 'application/json'
-  # response = http.request(request)
+  # Added Jenkins Service
+  body = "{
+    \"name\": \"jenkins\",
+    \"active\":\"true\",
+    \"events\":\[\"push\"\],
+    \"config\": \{\"jenkins_hook_url\": \"#{settings.jenkins_hook_url}\"\}
+  }"
 
-
-  begin
-    res = RestClient.post(
-      "#{settings.uri}/#{project}/keys?access_token=#{settings.access_token}",
-      {
-        "title": "Wolox Jenkins",
-        "key": File.open("#{ssh_path}.pub").read.gsub("\n", '')
-      },
-      content_type: :json,
-      accept: :json
-    )
-  rescue => e
-    puts "Error adding deploy key: #{e.response.body}"
-    return
-  end
-
-  # Added Jenkins service
-  # uri = URI.parse("#{settings.uri}/#{project}/hooks?access_token=#{settings.access_token}")
-  # http = Net::HTTP.new(uri.host, uri.port)
-  # http.use_ssl = true
-  # request = Net::HTTP::Post.new(uri.request_uri)
-  # request.set_form_data({
-  #   'name': 'jenkins',
-  #   'active': true,
-  #   'events': [
-  #       'push'
-  #   ],
-  #   'config': {
-  #     'jenkins_hook_url': settings.jenkins_hook_url
-  #   }
-  # })
-  # request['Content-Type'] = 'application/json'
-  # response = http.request(request)
-
-  begin
-    res = RestClient.post(
-      "#{settings.uri}/#{project}/hooks?access_token=#{settings.access_token}",
-      {
-        'name': 'jenkins',
-        'active': true,
-        'events': [
-            'push'
-        ],
-        'config': {
-          'jenkins_hook_url': settings.jenkins_hook_url
-        }
-      },
-      content_type: :json,
-      accept: :json
-    )
-    puts 'Project authorized with Github'
-  rescue => e
-    puts "Error adding Jenkins service #{e.response.body}"
-  end
+  options = {
+    body: body,
+    headers: {'Content-Type' => 'application/json', 'User-Agent' => project}
+  }
+  response = HTTParty.post(
+    "#{settings.uri}/#{project}/hooks?access_token=#{settings.access_token}",
+    options
+  )
+  return puts "Error adding Jenkins service #{response.body}" if response.code != 201
+  puts 'Project authorized with Github!'
 end
 
 
