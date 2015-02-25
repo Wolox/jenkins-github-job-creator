@@ -1,5 +1,4 @@
-Jenkins-Github authorization script
-#####################################
+## Jenkins-Github authorization script
 
 This project allows to add a [Github deploy key](https://developer.github.com/guides/managing-deploy-keys/#deploy-keys) and [Jenkins Webhook](https://developer.github.com/webhooks/) to a github repository for a certain organization.
 
