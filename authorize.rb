@@ -5,11 +5,11 @@ require 'uri'
 require 'pry'
 require 'rest_client'
 
-use Rack::Auth::Basic do |username, password|
-  username == 'admin' and password == 'admin'
-end
-
 config_file '.credentials.yml'
+
+use Rack::Auth::Basic do |username, password|
+  username == settings.username and password == settings.password
+end
 
 # GET /authorize?project=example
 get '/authorize' do
