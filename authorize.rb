@@ -28,7 +28,9 @@ end
 
 def generate_ssh_keys(project)
   ssh_path = File.expand_path("~/.ssh/#{project}")
-  system("echo -e  'y\n'|ssh-keygen -q -t rsa -N '' -f #{ssh_path}")
+  system("rm #{ssh_path}")
+  system("rm #{ssh_path}.pub")
+  system("ssh-keygen -q -t rsa -N '' -f #{ssh_path}")
   ssh_path
 end
 
