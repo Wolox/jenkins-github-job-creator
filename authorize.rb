@@ -95,5 +95,5 @@ get '/authorize' do
   end
   return "<h2>#{project.capitalize} authorized with Github!.</h2>"\
          "<p>Add the following private key to the Jenkins credentials:</p>"\
-         "<p><strong>#{File.open("#{ssh_path}").read.gsub("\n", '')}</p></strong>"
+         "<p><strong>#{File.open("#{ssh_path}").read}</p></strong>"
 end
