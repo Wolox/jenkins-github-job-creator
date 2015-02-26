@@ -18,7 +18,7 @@ get '/authorize' do
 
   # Generate deploy key
   ssh_path = File.expand_path("~/.ssh/#{project}")
-  system("ssh-keygen -t rsa -N '' -f #{ssh_path}")
+  system("echo -e  'y\n'|ssh-keygen -q -t rsa -N '' -f #{ssh_path}")
 
   # Added deploy key
   body = "{
@@ -33,7 +33,7 @@ get '/authorize' do
     "#{settings.uri}/#{project}/keys?access_token=#{settings.access_token}",
     options
   )
-  return puts "Error generating deploy key #{response.body}" if response.code != 201
+  return "Error generating deploy key #{response.body}" if response.code != 201
 
   # Added Jenkins Service
   body = "{
@@ -51,8 +51,8 @@ get '/authorize' do
     "#{settings.uri}/#{project}/hooks?access_token=#{settings.access_token}",
     options
   )
-  return puts "Error adding Jenkins service #{response.body}" if response.code != 201
-  puts 'Project authorized with Github!'
+  return "Error adding Jenkins service #{response.body}" if response.code != 201
+  return 'Project authorized with Github!'
 end
 
 
