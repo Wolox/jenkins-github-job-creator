@@ -40,7 +40,7 @@ end
 
 def add_jenkins_service(project)
   make_request(
-    "#{settings.uri}/#{project}/hooks?access_token=#{settings.access_token}",,
+    "#{settings.uri}/#{project}/hooks?access_token=#{settings.access_token}",
     generate_request_options(jenkins_service_body, project)
   )
 end
