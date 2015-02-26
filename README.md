@@ -7,9 +7,9 @@ This project allows to add a [Github deploy key](https://developer.github.com/gu
 ### Ruby###
 
 - Dowload and install [Rbenv](https://github.com/sstephenson/rbenv).
-- This project is currently using Ruby version `2.2.0`, set your rbenv local to match this version. You can do this by setting the version in the `.ruby-version` file.
+- This project is currently using Ruby version `2.1.5`, set your rbenv local to match this version. You can do this by setting the version in the `.ruby-version` file.
 - Download and install [Ruby-Build](https://github.com/sstephenson/ruby-build).
-- Install the Ruby version by running `rbenv install 2.2.0`
+- Install the Ruby version by running `rbenv install 2.1.5`
 
 ### Sinatra ###
 
@@ -38,6 +38,58 @@ You should have a `.credentials.yml` in the project root with the following info
 - username: authentication user
 - password: authentication password
  
+## Deploy ##
+
+```bash
+  > sudo su - jenkins
+  > git clone https://github.com/Wolox/wolox-jenkins-github-authorize.git
+  > cd wolox-jenkins-github-authorize
+  > screen -L -dmS jenkins-github-authorize irb authorize.rb
+ ```
+
+You can kill the process by running `ps ax | grep jenkins-github-authorize` and killing it.
+
+## Nginx configuration ##
+
+In order to run this sinatra app with jenkins, you need to configure nginx (/etc/nginx/sites-available/jenkins) like this:
+
+```bash
+upstream app_server {
+    server 127.0.0.1:8080 fail_timeout=0;
+}
+
+upstream sinatra {
+   server 127.0.0.1:4567;
+}
+server {
+    listen 80;
+    listen [::]:80 default ipv6only=on;
+    server_name your-server-url;
+
+    location / {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+
+        if (!-f $request_filename) {
+            proxy_pass http://app_server;
+            break;
+        }
+    }
+
+   location /authorize {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+
+        if (!-f $request_filename) {
+            proxy_pass http://sinatra;
+            break;
+        }
+    }
+}
+```
+
 ## Contributing ##
 
 1. Fork it
