@@ -7,7 +7,21 @@ require 'httparty'
 
 config_file '.credentials.yml'
 
-use Rack::Auth::Basic do |username, password|
+class BlogAuth < Rack::Auth::Basic
+
+  def call(env)
+    request = Rack::Request.new(env)
+    case request.path
+    when '/authorize'
+      super
+    else
+      @app.call(env)  # skip auth
+    end
+  end
+
+end
+
+use BlogAuth do |username, password|
   username == settings.username and password == settings.password
 end
 
