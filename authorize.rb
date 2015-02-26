@@ -4,6 +4,7 @@ require 'net/http'
 require 'uri'
 require 'pry'
 require 'httparty'
+require 'jenkins_api_client'
 
 config_file '.credentials.yml'
 
@@ -77,15 +78,20 @@ get '/authorize' do
   project = params[:project]
 
   # Added deploy key
-  deploy_keys_response = add_deploy_key(generate_ssh_keys(project), project)
+  ssh_path = generate_ssh_keys(project)
+  deploy_keys_response = add_deploy_key(ssh_path, project)
   if deploy_keys_response.code != 201
-    return "Error generating deploy key #{deploy_keys_response.body}"
+    return "<p>Error generating deploy key:</p>"\
+           "<p><strong>#{deploy_keys_response.body}</p></strong>"
   end
 
   # Added Jenkins Service
   jenkins_service_response = add_jenkins_service(project)
   if jenkins_service_response.code != 201
-    return "Error adding Jenkins service #{jenkins_service_response.body}"
+    return "<p>Error adding Jenkins service:</p>"\
+           "<p><strong>#{jenkins_service_response.body}</p></strong>"
   end
-  return "#{project} authorized with Github!"
+  return "<h2>#{project.capitalize} authorized with Github!.</h2>"\
+         "<p>Add the following private key to the Jenkins credentials:</p>"\
+         "<p><strong>#{File.open("#{ssh_path}").read.gsub("\n", '')}</p></strong>"
 end
