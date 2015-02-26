@@ -23,7 +23,7 @@ This project allows to add a [Github deploy key](https://developer.github.com/gu
   > rbenv rehash
   > bundle
  ```
- 
+
 ### How to use it ###
 
 Access to `http://your-server/authorize?project=github-project` where `github-project` is the github repository name you want to authorize. You will have to enter the username and password explained in `Environment Configuration`
@@ -37,17 +37,17 @@ You should have a `.credentials.yml` in the project root with the following info
 - jenkins_hook_url: http://your-server/github-webhook/
 - username: authentication user
 - password: authentication password
- 
+
 ## Deploy ##
 
 ```bash
   > sudo su - jenkins
   > git clone https://github.com/Wolox/wolox-jenkins-github-authorize.git
   > cd wolox-jenkins-github-authorize
-  > screen -L -dmS jenkins-github-authorize irb authorize.rb
+  > nohup irb authorize.rb&
  ```
 
-You can kill the process by running `ps ax | grep jenkins-github-authorize` and killing it.
+You can kill the process by running `ps ax | grep nohup` and killing it.
 
 ## Nginx configuration ##
 
