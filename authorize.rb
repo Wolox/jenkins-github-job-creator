@@ -22,9 +22,9 @@ class BlogAuth < Rack::Auth::Basic
 
 end
 
-use BlogAuth do |username, password|
-  username == settings.username and password == settings.password
-end
+# use BlogAuth do |username, password|
+#   username == settings.username and password == settings.password
+# end
 
 def generate_ssh_keys(project)
   ssh_path = File.expand_path("~/.ssh/#{project}")
@@ -95,5 +95,5 @@ get '/authorize' do
   end
   return "<h2>#{project.capitalize} authorized with Github!.</h2>"\
          "<p>Add the following private key to the Jenkins credentials:</p>"\
-         "<p><strong>#{File.open("#{ssh_path}").read}</p></strong>"
+         "<p><strong>#{File.open("#{ssh_path}").read.gsub("\n", "<br/>")}</p></strong>"
 end
