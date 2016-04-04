@@ -65,7 +65,7 @@ end
 def jenkins_service_body
   "{
     \"name\": \"jenkins\",
-    \"active\":\"true\",
+    \"active\":true,
     \"events\":\[\"push\"\],
     \"config\": \{\"jenkins_hook_url\": \"#{settings.jenkins_hook_url}\"\}
   }"
