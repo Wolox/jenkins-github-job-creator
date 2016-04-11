@@ -27,32 +27,23 @@ end
 # end
 
 def generate_jenkins_credential(project, private_key)
-  make_request(
-    'http://ci.wolox.com.ar/credential-store/domain/_/createCredentials',
-    name: project,
-    json: {
-      domainCredentials: {
-        domain: {
-          name: '',
-          description: '',
-        },
-        credentials: {
-          scope: 'GLOBAL',
-          id: '',
-          username: project,
-          description: '',
-          privateKeySource: {
-            value: '0',
-            privateKey: private_key,
-            'stapler-class' => 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey$DirectEntryPrivateKeySource'
-          },
-          passphrase: '',
-          'stapler-class' => 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey',
-          '$class' => 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey'
-        }
-      }
-    }.to_json
-  )
+  json = {
+    credentials: {
+      scope: 'GLOBAL',
+      id: '',
+      username: project,
+      description: '',
+      privateKeySource: {
+        value: '0',
+        privateKey: private_key,
+        'stapler-class' => 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey$DirectEntryPrivateKeySource'
+      },
+      passphrase: '',
+      'stapler-class' => 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey',
+      '$class' => 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey'
+    }
+  }.to_json
+  system("curl -X POST http://ci.wolox.com.ar/credential-store/domain/_/createCredentials --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\" --data-urlencode json='#{json}'")
 end
 
 def generate_ssh_keys(project)

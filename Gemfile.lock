@@ -2,10 +2,13 @@ GEM
   remote: https://rubygems.org/
   specs:
     backports (3.6.4)
-    binding_of_caller (0.7.2)
-      debug_inspector (>= 0.0.1)
+    byebug (3.5.1)
+      columnize (~> 0.8)
+      debugger-linecache (~> 1.2)
+      slop (~> 3.6)
     coderay (1.1.0)
-    debug_inspector (0.0.2)
+    columnize (0.9.0)
+    debugger-linecache (1.2.0)
     httparty (0.13.3)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
@@ -27,11 +30,9 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    pry-nav (0.2.4)
-      pry (>= 0.9.10, < 0.11.0)
-    pry-stack_explorer (0.4.9.2)
-      binding_of_caller (>= 0.7)
-      pry (>= 0.9.11)
+    pry-byebug (3.0.1)
+      byebug (~> 3.4)
+      pry (~> 0.10)
     rack (1.6.0)
     rack-protection (1.5.3)
       rack
@@ -57,11 +58,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  byebug
   httparty
   jenkins_api_client
-  pry
-  pry-nav
-  pry-stack_explorer
+  pry-byebug
   sinatra
   sinatra-contrib
 
