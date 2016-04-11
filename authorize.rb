@@ -110,7 +110,7 @@ get '/authorize' do
 
   # Adds deploy key
   ssh_path = generate_ssh_keys(project)
-  private_key = File.open(ssh_path).read.gsub('\n', '<br/>')
+  private_key = File.open(ssh_path).read.gsub("\n", "<br/>")
   generate_jenkins_credential(project, private_key)
   deploy_keys_response = add_deploy_key(ssh_path, project)
   if deploy_keys_response.code != 201
