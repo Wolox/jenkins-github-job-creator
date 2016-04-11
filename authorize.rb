@@ -28,7 +28,7 @@ end
 
 def generate_jenkins_credential(project, private_key)
   make_request(
-    'credential-store/domain/_/createCredentials',
+    'http://ci.wolox.com.ar/credential-store/domain/_/createCredentials',
     name: project,
     json: {
       domainCredentials: {
