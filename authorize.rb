@@ -116,6 +116,5 @@ get '/authorize' do
            "<p><strong>#{jenkins_service_response.body}</p></strong>"
   end
   return "<h2>#{project.capitalize} authorized with Github!.</h2>"\
-         "<p>Add the following private key to the Jenkins credentials:</p>"\
-         "<p><strong>#{private_key}</p></strong>"
+         "<p>You can now create the jobs and assign the <strong>#{project}</strong> credential.</p>"
 end
