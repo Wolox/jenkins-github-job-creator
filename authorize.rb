@@ -26,6 +26,35 @@ end
 #   username == settings.username and password == settings.password
 # end
 
+def generate_jenkins_credential(project, private_key)
+  make_request(
+    '/credential-store/domain/_/createCredentials',
+    name: project,
+    json: {
+      domainCredentials: {
+        domain: {
+          name: '',
+          description: '',
+        },
+        credentials: {
+          scope: 'GLOBAL',
+          id: '',
+          username: project,
+          description: '',
+          privateKeySource: {
+            value: '0',
+            privateKey: private_key,
+            'stapler-class' => 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey$DirectEntryPrivateKeySource'
+          },
+          passphrase: '',
+          'stapler-class' => 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey',
+          '$class' => 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey'
+        }
+      }
+    }.to_json
+  )
+end
+
 def generate_ssh_keys(project)
   ssh_path = File.expand_path("~/.ssh/#{project}")
   system("rm #{ssh_path}")
@@ -79,15 +108,17 @@ end
 get '/authorize' do
   project = params[:project]
 
-  # Added deploy key
+  # Adds deploy key
   ssh_path = generate_ssh_keys(project)
+  private_key = File.open(ssh_path).read.gsub('\n', '<br/>')
+  generate_jenkins_credential(project, private_key)
   deploy_keys_response = add_deploy_key(ssh_path, project)
   if deploy_keys_response.code != 201
     return "<p>Error generating deploy key:</p>"\
            "<p><strong>#{deploy_keys_response.body}</p></strong>"
   end
 
-  # Added Jenkins Service
+  # Adds Jenkins Service
   jenkins_service_response = add_jenkins_service(project)
   if jenkins_service_response.code != 201
     return "<p>Error adding Jenkins service:</p>"\
@@ -95,5 +126,5 @@ get '/authorize' do
   end
   return "<h2>#{project.capitalize} authorized with Github!.</h2>"\
          "<p>Add the following private key to the Jenkins credentials:</p>"\
-         "<p><strong>#{File.open("#{ssh_path}").read.gsub("\n", "<br/>")}</p></strong>"
+         "<p><strong>#{private_key}</p></strong>"
 end
