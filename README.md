@@ -47,7 +47,7 @@ You should have a `.credentials.yml` in the project root with the following info
   > nohup irb authorize.rb&
  ```
 
-You can kill the process by running `ps ax | grep nohup` and killing it.
+You can kill the process by running `ps ax | grep nohup` and killing it. If you can't see the process pid and you know its running you can get the pid by running `netstat -l -p | grep 4567`.
 
 ## Nginx configuration ##
 

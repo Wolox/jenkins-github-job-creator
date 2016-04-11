@@ -28,7 +28,7 @@ end
 
 def generate_jenkins_credential(project, private_key)
   make_request(
-    '/credential-store/domain/_/createCredentials',
+    'credential-store/domain/_/createCredentials',
     name: project,
     json: {
       domainCredentials: {

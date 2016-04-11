@@ -64,3 +64,6 @@ DEPENDENCIES
   pry-stack_explorer
   sinatra
   sinatra-contrib
+
+BUNDLED WITH
+   1.10.6
