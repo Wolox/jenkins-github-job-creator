@@ -91,6 +91,27 @@ def jenkins_service_body
   }"
 end
 
+def generate_jobs(project, tech)
+  if tech == 'rails'
+    project_base = 'RoR-Example-Project'
+    project_name = project.split(' ').map(&:capitalize).join('-')
+    create_jobs(project_base, project_name)
+  elsif tech == 'angular'
+    project_base = 'angular-example-project'
+    project_name = project.split(' ').map(&:downcase).join('-')
+    create_jobs(project_base, project_name)
+  elsif tech == 'android'
+    project_base = 'Android-Example-Project'
+    project_name = project.split(' ').map(&:capitalize).join('-')
+    create_jobs(project_base, project_name)
+  end
+end
+
+def create_jobs(project_base, project_name)
+  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Pull%20Requests/createItem\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\" --data-urlencode json='{\"name\": \"#{project_name}\", \"mode\": \"copy\", \"from\": \"#{project_base}\"}'")
+  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Base%20Branch/createItem\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\" --data-urlencode json='{\"name\": \"#{project_name}-Base\", \"mode\": \"copy\", \"from\": \"#{project_base}-Base\"}'")
+end
+
 def make_request(url, options)
   HTTParty.post(url, options)
 end
@@ -98,11 +119,15 @@ end
 # GET /authorize?project=github-repo
 get '/authorize' do
   project = params[:project]
+  tech = params[:tech]
 
   # Adds deploy key
   ssh_path = generate_ssh_keys(project)
   private_key = File.open(ssh_path).read
   generate_jenkins_credential(project, private_key)
+  if !generate_jobs(project, tech)
+    return "<p>Error generating jobs</p>"\
+  end
   deploy_keys_response = add_deploy_key(ssh_path, project)
   if deploy_keys_response.code != 201
     return "<p>Error generating deploy key:</p>"\
