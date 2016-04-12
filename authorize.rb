@@ -140,6 +140,6 @@ get '/authorize' do
     return "<p>Error adding Jenkins service:</p>"\
            "<p><strong>#{jenkins_service_response.body}</p></strong>"
   end
-  return "<h2>#{project.capitalize} authorized with Github!.</h2>"\
-         "<p>You can now create the jobs and assign the <strong>#{project}</strong> credential.</p>"
+  return "<h2>#{project.capitalize} Wolox CI jobs created!.</h2>"\
+         "<p>You can assign the <strong>#{project}</strong> credential and replace the jobs setup with your custom configuration</p>"
 end
