@@ -94,22 +94,22 @@ end
 def generate_jobs(project, tech)
   if tech == 'rails'
     project_base = 'RoR-Example-Project'
-    project_name = project.split(' ').map(&:capitalize).join('-')
+    project_name = project.split('-').map(&:capitalize).join('-')
     create_jobs(project_base, project_name)
   elsif tech == 'angular'
     project_base = 'angular-example-project'
-    project_name = project.split(' ').map(&:downcase).join('-')
+    project_name = project.split('-').map(&:downcase).join('-')
     create_jobs(project_base, project_name)
   elsif tech == 'android'
     project_base = 'Android-Example-Project'
-    project_name = project.split(' ').map(&:capitalize).join('-')
+    project_name = project.split('-').map(&:capitalize).join('-')
     create_jobs(project_base, project_name)
   end
 end
 
 def create_jobs(project_base, project_name)
-  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Pull%20Requests/createItem\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\" --data-urlencode json='{\"name\": \"#{project_name}\", \"mode\": \"copy\", \"from\": \"#{project_base}\"}'")
-  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Base%20Branch/createItem\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\" --data-urlencode json='{\"name\": \"#{project_name}-Base\", \"mode\": \"copy\", \"from\": \"#{project_base}-Base\"}'")
+  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Pull%20Requests/createItem?name=#{project_name}&mode=copy&from=#{project_base}\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
+  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Base%20Branch/createItem?name=#{project_name}-Base&mode=copy&from=#{project_base}-Base\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
 end
 
 def make_request(url, options)
