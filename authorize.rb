@@ -93,23 +93,29 @@ end
 
 def generate_jobs(project, tech)
   if tech == 'rails'
-    project_base = 'RoR-Example-Project'
+    project_from = 'RoR-Example-Project'
+    project_from_base = "#{project_from}-Base"
     project_name = project.split('-').map(&:capitalize).join('-')
-    create_jobs(project_base, project_name)
+    project_name_base = "#{project_name}-Base"
+    create_jobs(project_from, project_from_base, project_name, project_name_base)
   elsif tech == 'angular'
-    project_base = 'angular-example-project'
+    project_from = 'angular-example-project'
+    project_from_base = "#{project_from}-base"
     project_name = project.split('-').map(&:downcase).join('-')
-    create_jobs(project_base, project_name)
+    project_name_base = "#{project_name}-base"
+    create_jobs(project_from, project_from_base, project_name, project_name_base)
   elsif tech == 'android'
-    project_base = 'Android-Example-Project'
+    project_from = 'Android-Example-Project'
+    project_from_base = "#{project_from}-Base"
     project_name = project.split('-').map(&:capitalize).join('-')
-    create_jobs(project_base, project_name)
+    project_name_base = "#{project_name}-Base"
+    create_jobs(project_from, project_from_base, project_name, project_name_base)
   end
 end
 
-def create_jobs(project_base, project_name)
-  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Pull%20Requests/createItem?name=#{project_name}&mode=copy&from=#{project_base}\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
-  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Base%20Branch/createItem?name=#{project_name}-Base&mode=copy&from=#{project_base}-Base\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
+def create_jobs(project_from, project_from_base, project_name, project_name_base)
+  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Pull%20Requests/createItem?name=#{project_name}&mode=copy&from=#{project_from}\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
+  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Base%20Branch/createItem?name=#{project_name_base}&mode=copy&from=#{project_from_base}\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
 end
 
 def make_request(url, options)
