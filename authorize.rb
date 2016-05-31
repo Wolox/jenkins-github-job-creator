@@ -43,7 +43,7 @@ def generate_jenkins_credential(project, private_key)
       '$class' => 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey'
     }
   }.to_json
-  system("curl -X POST http://ci.wolox.com.ar/credential-store/domain/_/createCredentials --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\" --data-urlencode json='#{json}'")
+  system("curl -X POST http://ci.wolox.com.ar/credentials/store/system/domain/_/createCredentials --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\" --data-urlencode json='#{json}'")
 end
 
 def generate_ssh_keys(project)
