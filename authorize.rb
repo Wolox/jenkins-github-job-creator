@@ -114,8 +114,8 @@ def generate_jobs(project, tech)
 end
 
 def create_jobs(project_from, project_from_base, project_name, project_name_base)
-  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Pull%20Requests/createItem?name=#{project_name}&mode=copy&from=#{project_from}\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
-  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Base%20Branch/createItem?name=#{project_name_base}&mode=copy&from=#{project_from_base}\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
+  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Pull%20Requests/createItem?name=#{project_name}&mode=copy&from=#{project_from}&_.addToCurrentView=on&json=%7B%22name%22%3A+%22#{project_name}%22%2C+%22mode%22%3A+%22copy%22%2C+%22from%22%3A+%22#{project_from}%22%2C+%22addToCurrentView%22%3A+true%7D\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
+  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Base%20Branch/createItem?name=#{project_name_base}&mode=copy&from=#{project_from_base}&_.addToCurrentView=on&json=%7B%22name%22%3A+%22#{project_name_base}%22%2C+%22mode%22%3A+%22copy%22%2C+%22from%22%3A+%22#{project_from_base}%22%2C+%22addToCurrentView%22%3A+true%7D\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
 end
 
 def make_request(url, options)
