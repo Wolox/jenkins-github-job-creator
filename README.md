@@ -1,10 +1,12 @@
-## Wolox CI Kickoff Script
+## Jenkins Github Job Creator
 
-This Sinatra project creates the basic things needed for a job to work in Wolox CI integrated with Github Pull Requests. It does the following:
+This Sinatra project creates jobs in a Jenkins instance with some basic configuration. It does the following:
 
   - Add deploy key to Github repository and a Credential to Jenkins
   - Adds Jenkins Service as a Github webhook to allow Pull Requests integration
   - Creates the two basic jobs needed for every technology.
+
+This script is used at [Wolox](https://wolox.co), so many things in the script could suit Wolox way or working. Fill free to propose changes.
 
 ## Environment Configuration
 
@@ -21,7 +23,7 @@ This Sinatra project creates the basic things needed for a job to work in Wolox 
 - Install all the gems included in the project.
 
   ```bash
-    git clone https://github.com/Wolox/wolox-jenkins-github-authorize.git
+    git clone https://github.com/Wolox/jenkins-github-job-creator.git
     gem install bundler
     rbenv rehash
     bundle
@@ -29,30 +31,29 @@ This Sinatra project creates the basic things needed for a job to work in Wolox 
 
 ### How to use it
 
-Access to `http://your-server/authorize?project=github-project&tech=project-technology` where `github-project` is the github repository name you want to authorize and tech is either `rails`, `angular` or `android`.
+Access to `http://your-server/authorize?project=github-repo-name&tech=project-technology` where `github-repo-name` is the github repository name you want to authorize and `project-technology` is either `rails`, `angular` or `android`.
 
 ### Environment configuration
 
 You must have a `.credentials.yml` in the project root with the following information:
 
+- jenkins_url: Jenkins domain url. Eg: `https://some-domain.com`
 - access_token: Github access token
 - uri: https://api.github.com/repos/your-organization
-- jenkins_hook_url: http://your-server/github-webhook/
+- jenkins_hook_url: https://your-server/github-webhook/
 - username: authentication user
 - password: authentication password
-- jenkins_api_user: A Wolox CI username
-- jenkins_api_token: The api token of the Wolox CI username chosen. The people can be found [here](http://ci.wolox.com.ar/asynchPeople/)
+- jenkins_api_user: A Github username
+- jenkins_api_token: The api token of the Github username username chosen.
 
 ## Deploy
-
-To make this project work you will need the Wolox CI pem. You can ask [Santiago Samra](mailto:santiago.samra@wolox.com.ar) or [Esteban Pintos](mailto:esteban.pintos@wolox.com.ar) for it.
 
 Then you need to access the EC2 instance by `ssh` and run:
 
 ```bash
   sudo su - jenkins
-  git clone https://github.com/Wolox/wolox-jenkins-github-authorize.git
-  cd wolox-jenkins-github-authorize
+  git clone https://github.com/Wolox/jenkins-github-job-creator.git
+  cd jenkins-github-job-creator
   nohup irb authorize.rb&
 ```
 
@@ -60,11 +61,11 @@ You can kill the process by running `ps ax | grep nohup` and killing it with `ki
 
 ## Logs
 
-You can see the logs by running `tail -f nohup.out` under the `wolox-jenkins-github-authorize` folder.
+You can see the logs by running `tail -f nohup.out` under the `jenkins-github-job-creator` folder.
 
 ## Nginx configuration
 
-In order to run this sinatra app with jenkins, you need to configure nginx (/etc/nginx/sites-available/jenkins) like this:
+In order to run this Sinatra app with jenkins, you need to configure nginx (/etc/nginx/sites-available/jenkins) like this:
 
 ```bash
   upstream app_server {
@@ -116,4 +117,3 @@ In order to run this sinatra app with jenkins, you need to configure nginx (/etc
 This project is maintained by [Esteban Pintos](https://github.com/epintos) and it is written by [Wolox](http://www.wolox.com.ar).
 
 ![Wolox](https://raw.githubusercontent.com/Wolox/press-kit/master/logos/logo_banner.png)
-

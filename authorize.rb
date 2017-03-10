@@ -22,10 +22,6 @@ class BlogAuth < Rack::Auth::Basic
 
 end
 
-# use BlogAuth do |username, password|
-#   username == settings.username and password == settings.password
-# end
-
 def generate_jenkins_credential(project, private_key)
   json = {
     credentials: {
@@ -43,7 +39,7 @@ def generate_jenkins_credential(project, private_key)
       '$class' => 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey'
     }
   }.to_json
-  system("curl -X POST http://ci.wolox.com.ar/credentials/store/system/domain/_/createCredentials --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\" --data-urlencode json='#{json}'")
+  system("curl -X POST #{settings.jenkins_url}/credentials/store/system/domain/_/createCredentials --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\" --data-urlencode json='#{json}'")
 end
 
 def generate_ssh_keys(project)
@@ -114,8 +110,8 @@ def generate_jobs(project, tech)
 end
 
 def create_jobs(project_from, project_from_base, project_name, project_name_base)
-  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Pull%20Requests/createItem?name=#{project_name}&mode=copy&from=#{project_from}&_.addToCurrentView=on&json=%7B%22name%22%3A+%22#{project_name}%22%2C+%22mode%22%3A+%22copy%22%2C+%22from%22%3A+%22#{project_from}%22%2C+%22addToCurrentView%22%3A+true%7D\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
-  system("curl -X POST \"http://ci.wolox.com.ar/view/Actives%20Base%20Branch/createItem?name=#{project_name_base}&mode=copy&from=#{project_from_base}&_.addToCurrentView=on&json=%7B%22name%22%3A+%22#{project_name_base}%22%2C+%22mode%22%3A+%22copy%22%2C+%22from%22%3A+%22#{project_from_base}%22%2C+%22addToCurrentView%22%3A+true%7D\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
+  system("curl -X POST \"#{settings.jenkins_url}/view/Actives%20Pull%20Requests/createItem?name=#{project_name}&mode=copy&from=#{project_from}&_.addToCurrentView=on&json=%7B%22name%22%3A+%22#{project_name}%22%2C+%22mode%22%3A+%22copy%22%2C+%22from%22%3A+%22#{project_from}%22%2C+%22addToCurrentView%22%3A+true%7D\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
+  system("curl -X POST \"#{settings.jenkins_url}/view/Actives%20Base%20Branch/createItem?name=#{project_name_base}&mode=copy&from=#{project_from_base}&_.addToCurrentView=on&json=%7B%22name%22%3A+%22#{project_name_base}%22%2C+%22mode%22%3A+%22copy%22%2C+%22from%22%3A+%22#{project_from_base}%22%2C+%22addToCurrentView%22%3A+true%7D\" --user \"#{settings.jenkins_api_user}:#{settings.jenkins_api_token}\"")
 end
 
 def make_request(url, options)
@@ -146,6 +142,6 @@ get '/authorize' do
     return "<p>Error adding Jenkins service:</p>"\
            "<p><strong>#{jenkins_service_response.body}</p></strong>"
   end
-  return "<h2>#{project.capitalize} Wolox CI jobs created!.</h2>"\
+  return "<h2>#{project.capitalize} Jenkins jobs created!.</h2>"\
          "<p>You can assign the <strong>#{project}</strong> credential and replace the jobs setup with your custom configuration</p>"
 end
